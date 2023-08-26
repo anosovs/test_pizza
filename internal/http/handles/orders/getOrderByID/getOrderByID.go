@@ -16,7 +16,16 @@ type Response struct {
 type GetOrder interface{
 	GetOrderById(order_id string) (models.Order, error)
 }
-
+// GetOrderByID godoc
+// @Summary Get order by ID
+// @Description Get order by ID
+// @Tags orders
+// @Accept  json
+// @Produce  json
+// @Param order_id   path string true "Order ID"
+// @Success 200 {object} models.Order
+// @Failure      500  {string}  string
+// @Router /orders/{order_id} [get]
 func New(log *slog.Logger,  i GetOrder) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request)  {
 		order_id := chi.URLParam(r, "order_id")

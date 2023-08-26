@@ -20,6 +20,18 @@ type AddItems interface{
 	AddItems(order_id string, items []int) error
 }
 
+// AddItems godoc
+// @Summary Add items to order
+// @Description Add items to order
+// @Tags orders
+// @Accept  json
+// @Produce  json
+// @Param order_id   path string true "Order ID"
+// @Param items body []int true "update item list in order"
+// @Success 200 
+// @Failure      400  {object}  string
+// @Failure      500  {string}  string
+// @Router /orders/{order_id}/items [post]
 func New(log *slog.Logger,  i AddItems) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request)  {
 		var req Request

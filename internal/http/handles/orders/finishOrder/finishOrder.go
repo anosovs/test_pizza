@@ -12,6 +12,17 @@ type FinisherOrder interface{
 	FinishOrder(order_id string) error
 }
 
+// FinishOrder godoc
+// @Summary Finish order by ID
+// @Description Finish order by ID
+// @Tags orders
+// @Accept  json
+// @Produce  json
+// @Param order_id   path string true "Order ID"
+// @Success 200
+// @Failure      500  {string}  string
+// @Failure      401  {string}  string
+// @Router /orders/{order_id}/done [get]
 func New(log *slog.Logger,  i FinisherOrder) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request)  {
 		order_id := chi.URLParam(r, "order_id")

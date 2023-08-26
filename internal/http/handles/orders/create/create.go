@@ -19,11 +19,22 @@ type Request struct {
 type CreateOrder interface{
 	CreateOrder(items []int) (models.Order, error)
 }
-
+// CreateOrder godoc
+// @Summary Insert new order
+// @Description Add new order 
+// @Tags orders
+// @Accept  json
+// @Produce  json
+// @Param items body []int true "Create order"
+// @Success 200 {object} models.Order
+// @Failure      400  {string}  string
+// @Failure      500  {string}  string
+// @Router /orders [post]
 func New(log *slog.Logger,  i CreateOrder) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request)  {
 		var req Request
 		err := json.NewDecoder(r.Body).Decode(&req)
+		
 		defer r.Body.Close()
 		if errors.Is(err, io.EOF) {
 			log.Error("request body is empty")
