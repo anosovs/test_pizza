@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"os"
+	_ "test_pizza/docs"
 	"test_pizza/internal/config"
 	addItemsOrder "test_pizza/internal/http/handles/orders/addItems"
 	createOrder "test_pizza/internal/http/handles/orders/create"
@@ -15,7 +16,7 @@ import (
 	postge "test_pizza/internal/storage/postgre"
 	"test_pizza/internal/storage/ram"
 
-	_ "test_pizza/docs"
+	httpSwagger "github.com/swaggo/http-swagger"
 
 	"github.com/go-chi/chi"
 	"golang.org/x/exp/slog"
@@ -28,7 +29,7 @@ import (
 // @contact.name API Support
 // @license.name Apache 2.0
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
-// @host localhost:8080
+// @host 127.0.0.1:8080
 // @BasePath /
 // @securitydefinitions.apikey ApiKeyAuth
 // @in header
@@ -64,9 +65,13 @@ func main() {
 	r.Get("/orders/{order_id}", getOrderByID.New(log, storage))
 	r.With(xapikey.CheckApiKey).Post("/orders/{order_id}/done", finishOrder.New(log, storage))
 	r.With(xapikey.CheckApiKey).Get("/orders", getOrdersByStatus.New(log, storage))
-	// r.Get("/swagger/*", httpSwagger.Handler(
-	// 	httpSwagger.URL("./docs/swagger.json"), 
-	// ))
+	r.Get("/swagger.json", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
+		http.ServeFile(w, r, "./docs/swagger.json")
+	})
+	r.Get("/swagger/*", httpSwagger.Handler(
+		httpSwagger.URL("http://127.0.0.1:8080/swagger.json"), //The url pointing to API definition
+	))
 	
 	srv := &http.Server{
 		Addr: cfg.ServerHost,
